@@ -14,7 +14,6 @@ function App() {
 
   let history = useHistory();
   let query = useQuery();
-  let location = useLocation();
 
   const requestDocument = async (requestPage = currentPage) => {
     const totalDocumentPerPage = 5;
