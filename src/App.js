@@ -2,12 +2,18 @@ import "./App.css";
 import React, { useEffect, useState } from "react";
 import { data } from "./mockdata";
 import { useHistory, useLocation } from "react-router-dom";
+import { Page } from "./pages";
+
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
 
 function App() {
   const [pagedData, setPagedData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
 
   let history = useHistory();
+  let query = useQuery();
   let location = useLocation();
 
   const requestDocument = async (requestPage = currentPage) => {
@@ -26,31 +32,20 @@ function App() {
     return setPagedData(pagedDocument);
   };
 
-  useEffect(() => {
-    requestDocument();
-  }, [location]);
+  let page = query.get("page");
 
-  const handleClick = id => {
-    history.push(`/document/details/${id}`);
-  };
-  const handlePageChange = page => {
+  useEffect(() => {
     setCurrentPage(page);
     requestDocument(page);
+  }, [page]);
+
+  const handlePageChange = page => {
     history.push(`/?page=${page}&sortby=title&or=asc`);
   };
 
   return (
     <div>
-      <div>
-        {pagedData.map(item => (
-          <ul key={item.id}>
-            <li key={item.id}>{item.title}</li>
-            <button onClick={() => handleClick(item.id)}>
-              {item.title} Details
-            </button>
-          </ul>
-        ))}
-      </div>
+      <Page data={pagedData} history={history} page={page} />
 
       <div>
         <ul>
